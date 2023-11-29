@@ -246,4 +246,66 @@ views/index.html:
 ![Screenshot_135](https://github.com/AdeolaAdesina/Express_crash_course/assets/29931071/bd190b3a-eb79-42e1-abb1-8eeeb9208494)
 
 
+This error is because we don't have a view engine set up.
+
+We'll be using ejs as our view engine.
+
+So we'll close our server and install ejs.
+
+```
+npm i ejs
+```
+
+Then we'll tell our application to use that view engine in server.js:
+
+```
+const express = require('express');
+const { render } = require('express/lib/response');
+//then setup server
+const app = express()
+
+app.set('view engine', 'ejs')
+
+app.get('/', (req, res) => {
+    console.log("Here");
+    res.render('index')
+})
+
+//then we pass it a port number
+app.listen(3000)
+```
+
+Then you need to rename your index.html to index.ejs
+
+You can install ejs language support in VScode.
+
+
+Now if we restart our server.
+
+
+![Screenshot_136](https://github.com/AdeolaAdesina/Express_crash_course/assets/29931071/1875af0b-4060-456b-bada-aa44eec0e654)
+
+
+You can pass information from your server into your views.
+
+In server.js:
+
+```
+app.get('/', (req, res) => {
+    console.log("Here");
+    res.render('index', { text: 'World'})
+})
+```
+
+Then we access it inside index.ejs:
+
+```
+<body>
+    Hello <%= text %>
+</body>
+```
+
+
+![Screenshot_137](https://github.com/AdeolaAdesina/Express_crash_course/assets/29931071/12016b74-7132-4be5-abf4-361d8cfba5b0)
+
 
