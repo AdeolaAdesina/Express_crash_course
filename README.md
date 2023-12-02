@@ -670,3 +670,119 @@ We see:
 
 
 
+
+## Middleware
+
+SO let's create a middleware for logging out something
+
+Let's create a function for logger. 
+
+THen we use the middleware by calling app.use:
+
+server.js:
+
+```
+const express = require('express');
+const { render } = require('express/lib/response');
+//then setup server
+const app = express()
+
+app.set('view engine', 'ejs')
+app.use(logger)
+
+app.get('/', (req, res) => {
+    console.log("Here");
+    res.render('index', { text: 'World'})
+})
+
+const userRouter = require('./routes/users')
+
+function logger(req, res, next) {
+    console.log(req.originalUrl)
+    next()
+}
+
+app.use('/users', userRouter)
+
+//then we pass it a port number
+app.listen(3000)
+```
+
+
+If we refresh we will see the URL
+
+![Screenshot_145](https://github.com/AdeolaAdesina/Express_crash_course/assets/29931071/9b3da89c-cacd-45da-8f0b-55958f4ad11b)
+
+
+If we move app.use(logger) down and we run the homw URL, it won't log the URL because everything runs top to bottom.
+
+We can also pass our logger into app.get
+
+```
+const express = require('express');
+const { render } = require('express/lib/response');
+//then setup server
+const app = express()
+
+app.set('view engine', 'ejs')
+
+app.get('/', logger, (req, res) => {
+    console.log("Here");
+    res.render('index', { text: 'World'})
+})
+
+const userRouter = require('./routes/users')
+
+function logger(req, res, next) {
+    console.log(req.originalUrl)
+    next()
+}
+
+app.use('/users', userRouter)
+
+//then we pass it a port number
+app.listen(3000)
+```
+
+
+Because the logger is inside the / route, it will only log on this route.
+
+![Screenshot_146](https://github.com/AdeolaAdesina/Express_crash_course/assets/29931071/bb8e5afc-c828-4ad2-9a0f-462cf1b59f23)
+
+![Screenshot_147](https://github.com/AdeolaAdesina/Express_crash_course/assets/29931071/dff7ee73-9c80-4b23-9563-2c1bee0e236d)
+
+![Screenshot_148](https://github.com/AdeolaAdesina/Express_crash_course/assets/29931071/3349813f-34c3-4567-bf43-3d92997f5c18)
+
+And we can put more than one middleware in there:
+
+```
+const express = require('express');
+const { render } = require('express/lib/response');
+//then setup server
+const app = express()
+
+app.set('view engine', 'ejs')
+
+app.get('/', logger, logger, logger, (req, res) => {
+    console.log("Here");
+    res.render('index', { text: 'World'})
+})
+
+const userRouter = require('./routes/users')
+
+function logger(req, res, next) {
+    console.log(req.originalUrl)
+    next()
+}
+
+app.use('/users', userRouter)
+
+//then we pass it a port number
+app.listen(3000)
+```
+
+![Screenshot_149](https://github.com/AdeolaAdesina/Express_crash_course/assets/29931071/7cd3e4a1-4545-4213-abc2-b9ec2336dcb5)
+
+
+
+
