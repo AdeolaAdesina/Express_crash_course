@@ -412,4 +412,261 @@ Run the code to find that it still works.
 We can clean up how our routes are going to look.
 
 
+What if we want to create a form for a new user. So we'll use a post method.
+
+```
+const express = require('express')
+const router = express.Router()
+
+router.get('/', (req, res) => {
+    res.send('User List')
+})
+
+router.get('/new', (req, res) => {
+    res.send('User New Form')
+})
+
+router.post('/', (req, res) => {
+    res.send('Create User')
+})
+
+module.exports = router
+```
+
+Then we want to access an individual user based on the id of that user.
+
+```
+const express = require('express')
+const router = express.Router()
+
+router.get('/', (req, res) => {
+    res.send('User List')
+})
+
+router.get('/new', (req, res) => {
+    res.send('User New Form')
+})
+
+router.post('/', (req, res) => {
+    res.send('Create User')
+})
+
+router.get('/:id', (req, res) => {
+    //req.params.id
+    res.send(`Get User with ID ${req.params.id}`)
+})
+
+module.exports = router
+```
+
+
+![Screenshot_140](https://github.com/AdeolaAdesina/Express_crash_course/assets/29931071/364df2f2-0189-4cbc-a9dc-a9ce7de45a24)
+
+
+It pulls the number directly from the URL.
+
+
+Also because express runs from top to bottom, if you arrange your code like this:
+
+```
+const express = require('express')
+const router = express.Router()
+
+router.get('/', (req, res) => {
+    res.send('User List')
+})
+
+router.post('/', (req, res) => {
+    res.send('Create User')
+})
+
+router.get('/:id', (req, res) => {
+    req.params.id
+    res.send(`Get User with ID ${req.params.id}`)
+})
+
+router.get('/new', (req, res) => {
+    res.send('User New Form')
+})
+
+module.exports = router
+```
+
+
+If we now call /new in the browser, we'll get this.
+
+![Screenshot_141](https://github.com/AdeolaAdesina/Express_crash_course/assets/29931071/2b137d34-2a14-47ee-8d60-bd5d5c38543c)
+
+
+We were supposed to get the screen with "User New Form"
+
+So make sure you put your /new above your dynamic routes.
+
+
+Now let's also create a put route and a delete method for our dynamic route.
+
+
+```
+const express = require('express')
+const router = express.Router()
+
+router.get('/', (req, res) => {
+    res.send('User List')
+})
+
+router.get('/new', (req, res) => {
+    res.send('User New Form')
+})
+
+router.post('/', (req, res) => {
+    res.send('Create User')
+})
+
+router.get('/:id', (req, res) => {
+    req.params.id
+    res.send(`Get User with ID ${req.params.id}`)
+})
+
+router.put('/:id', (req, res) => {
+    res.send(`Update User with ID ${req.params.id}`)
+})
+
+router.delete('/:id', (req, res) => {
+    res.send(`Delete User with ID ${req.params.id}`)
+})
+
+module.exports = router
+```
+
+
+Then we can remodel it to look like this:
+
+```
+const express = require('express')
+const router = express.Router()
+
+router.get('/', (req, res) => {
+    res.send('User List')
+})
+
+router.get('/new', (req, res) => {
+    res.send('User New Form')
+})
+
+router.post('/', (req, res) => {
+    res.send('Create User')
+})
+
+router.route('/:id').get((req, res) => {
+    res.send(`Get User with ID ${req.params.id}`)
+}).put((req, res) => {
+    res.send(`Update User with ID ${req.params.id}`)
+}).delete((req, res) => {
+    res.send(`Delete User with ID ${req.params.id}`)
+})
+
+
+module.exports = router
+```
+
+So we have a get, put and delete method for the /:id route.
+
+
+
+Now let's talk about something related to param. the router.param function.
+
+The function is going to run any time it finds a param that matches the name you pass in.
+
+
+```
+const express = require('express')
+const router = express.Router()
+
+router.get('/', (req, res) => {
+    res.send('User List')
+})
+
+router.get('/new', (req, res) => {
+    res.send('User New Form')
+})
+
+router.post('/', (req, res) => {
+    res.send('Create User')
+})
+
+router.route('/:id').get((req, res) => {
+    res.send(`Get User with ID ${req.params.id}`)
+}).put((req, res) => {
+    res.send(`Update User with ID ${req.params.id}`)
+}).delete((req, res) => {
+    res.send(`Delete User with ID ${req.params.id}`)
+})
+
+router.param("id", (req, res, next, id) => {
+    console.log(id);
+}) 
+
+module.exports = router
+```
+
+If we run the code, you will find the id logged to the console.
+
+![Screenshot_142](https://github.com/AdeolaAdesina/Express_crash_course/assets/29931071/f340e1c3-64d4-489d-9422-e44738f550ac)
+
+![Screenshot_143](https://github.com/AdeolaAdesina/Express_crash_course/assets/29931071/53267a84-8117-4c83-a0fb-8f582e9120a4)
+
+
+But you will see the browser loading continously.
+
+It loads because we need to call the next function. Because param is a type of middleware.
+
+Middleware is the thing that runs between request and response.
+
+Now refreshing works.
+
+Now instead of logging the ID, i want to get the user with that ID.
+
+
+```
+const express = require('express')
+const router = express.Router()
+
+router.get('/', (req, res) => {
+    res.send('User List')
+})
+
+router.get('/new', (req, res) => {
+    res.send('User New Form')
+})
+
+router.post('/', (req, res) => {
+    res.send('Create User')
+})
+
+router.route('/:id').get((req, res) => {
+    console.log(req.user)
+    res.send(`Get User with ID ${req.params.id}`)
+}).put((req, res) => {
+    res.send(`Update User with ID ${req.params.id}`)
+}).delete((req, res) => {
+    res.send(`Delete User with ID ${req.params.id}`)
+})
+
+const users = [{ name: "Kyle" }, { name: "Sally"} ]
+
+router.param("id", (req, res, next, id) => {
+    req.user = users[id]
+    next()
+}) 
+
+module.exports = router
+```
+
+If we run http://localhost:3000/users/1
+
+We see:
+
+![Screenshot_144](https://github.com/AdeolaAdesina/Express_crash_course/assets/29931071/bd20750a-0c34-471a-9208-f861e85161e3)
+
+
 
