@@ -309,3 +309,107 @@ Then we access it inside index.ejs:
 ![Screenshot_137](https://github.com/AdeolaAdesina/Express_crash_course/assets/29931071/12016b74-7132-4be5-abf4-361d8cfba5b0)
 
 
+
+
+## Routers
+
+Let's create two simple routes.
+
+```
+const express = require('express');
+const { render } = require('express/lib/response');
+//then setup server
+const app = express()
+
+app.set('view engine', 'ejs')
+
+app.get('/', (req, res) => {
+    console.log("Here");
+    res.render('index', { text: 'World'})
+})
+
+app.get('/users', (req, res) => {
+    res.send('User List')
+})
+
+app.get('/users/new', (req, res) => {
+    res.send('User New Form')
+})
+
+//then we pass it a port number
+app.listen(3000)
+```
+
+![Screenshot_138](https://github.com/AdeolaAdesina/Express_crash_course/assets/29931071/10a4d9d1-c45e-4567-97f7-9be906fe267a)
+
+![Screenshot_139](https://github.com/AdeolaAdesina/Express_crash_course/assets/29931071/20b6c633-df47-4605-8a8f-6c411d873bd1)
+
+
+But it will make more sense if we take the code related to users and out that in it's own file. Then import it into server.js.
+
+We create a folder called routes, and a file called users.js.
+
+Router works exactly the same as app. It has .get, .put, .patch, .delete.
+
+We can also nest it inside a parent route. So we'll have / not /users.
+
+Then we'll export and import it into server.js.
+
+Then we'll use app.use
+
+
+routes/user.js:
+
+```
+const express = require('express')
+const router = express.Router()
+
+router.get('/', (req, res) => {
+    res.send('User List')
+})
+
+router.get('/new', (req, res) => {
+    res.send('User New Form')
+})
+
+module.exports = router
+```
+
+
+server.js:
+
+```
+const express = require('express');
+const { render } = require('express/lib/response');
+//then setup server
+const app = express()
+
+app.set('view engine', 'ejs')
+
+app.get('/', (req, res) => {
+    console.log("Here");
+    res.render('index', { text: 'World'})
+})
+
+const userRouter = require('./routes/users')
+
+app.use('/users', userRouter)
+
+//then we pass it a port number
+app.listen(3000)
+```
+
+Run the code to find that it still works.
+
+![Screenshot_138](https://github.com/AdeolaAdesina/Express_crash_course/assets/29931071/36df1e76-50fd-4905-856b-e76678aec75b)
+
+![Screenshot_139](https://github.com/AdeolaAdesina/Express_crash_course/assets/29931071/6733d13f-2a67-4fe5-800f-ee15ec522c32)
+
+
+
+## Advanced Routing
+
+We can clean up how our routes are going to look.
+
+
+
